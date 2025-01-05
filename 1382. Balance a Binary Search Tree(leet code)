@@ -1,0 +1,40 @@
+struct TreeNode*createnode(int data)
+{
+    struct TreeNode*newnode = malloc(sizeof(struct TreeNode));
+    newnode->val = data;
+    newnode->left = NULL;
+    newnode->right = NULL;
+    return newnode;
+}
+
+void inorder(struct TreeNode*root,int*arr,int*count)
+{
+    if(root==NULL)
+    return;
+    inorder(root->left,arr,count);
+    arr[(*count)++] = root->val;
+    inorder(root->right,arr,count);
+}
+
+struct TreeNode*create(int*arr,int left,int right)
+{
+    if(left<=right)
+    {
+        int mid = (left+right)/2;
+        struct TreeNode*root = createnode(arr[mid]);
+        root->left = create(arr,left,mid-1);
+        root->right = create(arr,mid+1,right);
+        return root;
+    }
+    return NULL;
+}
+
+
+struct TreeNode* balanceBST(struct TreeNode* root) 
+{
+   int arr[10005] ;
+   int size=0;
+   inorder(root,arr,&size);
+   struct TreeNode*root1 = create(arr,0,size-1);
+   return root1;
+}
