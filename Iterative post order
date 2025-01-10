@@ -1,0 +1,109 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node{
+    struct node*left;
+    struct node*right;
+    int data;
+}node;
+
+typedef struct Stack{
+    struct node*root;
+    struct Stack*next;
+}stack_b;
+
+stack_b*create_s_node(node*root)
+{
+    stack_b*new = malloc(sizeof(stack_b));
+    new->root=root;
+    new->next = NULL;
+    return new;
+}
+
+node* create_t_node(int data)
+{
+    node*new = malloc(sizeof(node));
+    new->left = NULL;
+    new->right = NULL;
+    new->data = data;
+    return new;
+}
+
+void push(stack_b**top,node*root)
+{
+    if(*top==NULL)
+    *top=create_s_node(root);
+    else{
+        stack_b*temp = create_s_node(root);
+        temp->next = *top;
+        *top = temp;
+    }
+}
+
+node* pop(stack_b**top)
+{
+    if(*top==NULL)
+    return NULL;
+    stack_b*temp = *top;
+    node*t_temp = temp->root;
+    *top = temp->next;
+    free(temp);
+    return t_temp;
+}
+
+int isempty(stack_b*top)
+{
+    if(top==NULL)
+    return 0;
+    return 1;
+}
+
+node*create_bst(node*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+   
+   if(root->data>data)
+   root->left = create_bst(root->left,data);
+   else
+   root->right = create_bst(root->right,data);
+   return root;
+}
+
+void postorder_DFS_display(node*root)
+{
+    if(root==NULL)
+    return;
+    node*temp=root;
+    stack_b*top=NULL;
+
+    while(isempty(top)||temp!=NULL)
+    {
+        while(temp!=NULL)
+        {
+            push(&top,temp);
+            temp=temp->right;
+        }
+        temp = pop(&top);
+        printf("%d ",temp->data);
+        temp=temp->left;
+
+    }
+}
+int main()
+{
+  int size;
+  printf("enter no of tree elements : ");
+  scanf("%d ",&size);
+  int arr[size];
+  printf("enter tree elements : ");
+  for(int i=0;i<size;i++)
+  scanf("%d",arr+i);
+  
+  node*root = NULL;
+  for(int i=0;i<size;i++)
+  root=create_bst(root,arr[i]);
+  printf("post order : ");
+  postorder_DFS_display(root);
+
+}
