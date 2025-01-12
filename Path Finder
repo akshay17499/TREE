@@ -1,0 +1,120 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node{
+    struct node*left;
+    struct node*right;
+    int data;
+}node;
+
+typedef struct Stack{
+    struct node*root;
+    struct Stack*next;
+    int depth;
+}stack_b;
+
+stack_b*create_s_node(node*root,int depth)
+{
+    stack_b*new = malloc(sizeof(stack_b));
+    new->root=root;
+    new->next = NULL;
+    new->depth=depth;
+    return new;
+}
+
+node* create_t_node(int data)
+{
+    node*new = malloc(sizeof(node));
+    new->left = NULL;
+    new->right = NULL;
+    new->data = data;
+    return new;
+}
+
+void push(stack_b**top,node*root,int depth)
+{
+    if(*top==NULL)
+    *top=create_s_node(root,depth);
+    else{
+        stack_b*temp = create_s_node(root,depth);
+        temp->next = *top;
+        //temp->depth = depth;
+        *top = temp;
+      //printf("depth : %d\n",temp->depth);
+    }
+}
+
+stack_b* pop(stack_b**top)
+{
+    if(*top==NULL)
+    return NULL;
+    stack_b*temp = *top;
+    *top = temp->next;
+    return temp;
+}
+
+int isempty(stack_b*top)
+{
+    if(top==NULL)
+    return 0;
+    return 1;
+}
+
+node*create_bst(node*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+   
+   if(root->data>data)
+   root->left = create_bst(root->left,data);
+   else
+   root->right = create_bst(root->right,data);
+   return root;
+}
+
+int find_path(node*root,int target)
+{
+    
+    if (root == NULL) return 0;
+
+    stack_b* stack = NULL;
+    int arr[100];
+    push(&stack,root,0);
+    arr[0] = root->data;
+    int index;
+   while(isempty(stack))
+   {
+     stack_b* s = pop(&stack);
+     node*current = s->root;
+     index = s->depth;
+     arr[index] = current->data;
+     if(current->data==target)
+     break;
+    if(current->left)
+    push(&stack,current->left,index +1);
+    if(current->right)
+    push(&stack,current->right,index + 1);
+   }
+   for(int i=0;i<=index;i++)
+   printf(" %d",arr[i]);
+}
+    
+int main()
+{
+  int size;
+  printf("enter no of tree elements : ");
+  scanf("%d",&size);
+  int arr[size];
+  printf("enter tree elements : ");
+  for(int i=0;i<size;i++)
+  scanf("%d",arr+i);
+  
+  node*root = NULL;
+  for(int i=0;i<size;i++)
+   root=create_bst(root,arr[i]);
+   int target;
+   printf("enter target node(must be present in the tree) : ");
+   scanf("%d",&target);
+    find_path(root,target);
+  
+}
