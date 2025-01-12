@@ -1,0 +1,124 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node{
+    struct node*left;
+    struct node*right;
+    int data;
+}node;
+
+typedef struct Stack{
+    struct node*root;
+    int depth;
+    struct Stack*next;
+}stack_b;
+
+stack_b*create_s_node(node*root,int depth)
+{
+    stack_b*new = malloc(sizeof(stack_b));
+    new->root=root;
+    new->next = NULL;
+    new->depth = depth;
+    return new;
+}
+
+node* create_t_node(int data)
+{
+    node*new = malloc(sizeof(node));
+    new->left = NULL;
+    new->right = NULL;
+    new->data = data;
+    return new;
+}
+
+node*create_bst(node*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+   
+   if(root->data>data)
+   root->left = create_bst(root->left,data);
+   else
+   root->right = create_bst(root->right,data);
+   return root;
+}
+void push(stack_b**top,node*root,int depth)
+{
+    if(*top==NULL){
+    *top = create_s_node(root,depth);
+    return;
+    }
+    stack_b*temp = create_s_node(root,depth);
+    temp->next = *top;
+    *top=temp;
+}
+stack_b*pop(stack_b**top)
+{
+    if(*top==NULL)
+    return NULL;
+    stack_b*temp = *top;
+    *top = temp->next;
+    return temp;
+}
+
+int isempty(stack_b*top)
+{
+    if(top==NULL)
+    return 0;
+    return 1;
+}
+void inorder(node*root)
+{
+    stack_b*top=NULL;
+    node*current = root;
+    while(isempty(top)||current!=NULL)
+    {
+        while(current)
+        {
+            push(&top,current,0);
+            current = current->left;
+        }
+        stack_b*temp = pop(&top);
+        current = temp->root;
+        printf("%d ",current->data);
+        current = current->right;
+    }
+}
+void preorder(node*root)
+{
+    stack_b*top=NULL;
+    node*current = root;
+    while(isempty(top)||current!=NULL)
+    {
+        while(current)
+        {
+            printf("%d ",current->data);
+            push(&top,current,0);
+            current = current->left;
+
+        }
+        stack_b*temp = pop(&top);
+        current= temp->root;
+        current = current->right;
+    }
+}
+
+int main()
+{
+  int size;
+  printf("enter no of tree elements : ");
+  scanf("%d",&size);
+  int arr[size];
+  printf("enter tree elements : ");
+  for(int i=0;i<size;i++)
+  scanf("%d",arr+i);
+  
+  node*root = NULL;
+  for(int i=0;i<size;i++)
+  root=create_bst(root,arr[i]);
+  printf("in order : ");
+  inorder(root);
+  printf("\npre order : ");
+  preorder(root);
+  
+}
