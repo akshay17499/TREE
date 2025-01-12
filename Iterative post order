@@ -72,29 +72,33 @@ node*create_bst(node*root,int data)
 
 void postorder_DFS_display(node*root)
 {
-    if(root==NULL)
-    return;
-    node*temp=root;
     stack_b*top=NULL;
-
-    while(isempty(top)||temp!=NULL)
+    push(&s,root);
+    node*lastseen=NULL;
+    node*current = root;
+    while(isempty(top)||current!=NULL)
     {
-        while(temp!=NULL)
+        if(current)
         {
-            push(&top,temp);
-            temp=temp->right;
+            push(&top,current);
+            current = current->left;
         }
-        temp = pop(&top);
-        printf("%d ",temp->data);
-        temp=temp->left;
-
+        else{
+            current = top->root;
+            if(current->right!=NULL&&current->right!=lastseen)
+            current = current->right;
+            else{
+                lastseen =  pop(&top);
+                printf("%d ",lastseen->data);
+            }
+        }
     }
 }
 int main()
 {
   int size;
   printf("enter no of tree elements : ");
-  scanf("%d ",&size);
+  scanf("%d",&size);
   int arr[size];
   printf("enter tree elements : ");
   for(int i=0;i<size;i++)
