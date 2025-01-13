@@ -1,0 +1,135 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node
+{
+    struct node*left;
+    struct node*right;
+    int data;
+}tree;
+
+struct qnode
+{
+    struct qnode*next;
+     tree*root;
+};
+
+typedef struct queue{
+    struct qnode*front;
+    struct qnode*rear;
+}queue;
+
+tree*create_t_node(int data)
+{
+    tree*new = malloc(sizeof(tree));
+    new->data=data;
+    new->left=new->right=NULL;
+    return new;
+}
+
+queue*create_queue()
+{
+    queue*new = malloc(sizeof(queue));
+    new->front = new->rear = NULL;
+    return new;
+}
+
+void enqueue(queue*q , tree*root)
+{
+    struct qnode* new = malloc(sizeof(struct qnode));
+    new->root = root;
+    new->next = NULL;
+    if(q->front==NULL)
+    {
+        q->front=q->rear=new;
+        return;
+    }
+    q->rear->next = new;
+    q->rear = new;  
+}
+
+tree*dequeue(queue*q)
+{
+    if(q->front==NULL)
+    return NULL;
+    if(q->front==q->rear)
+    {
+        tree*temp = q->rear->root;
+        q->front=q->rear=NULL;
+        return temp;
+    }
+    tree*temp = q->front->root;
+    q->front = q->front->next;
+    return temp;
+}
+
+tree*create_tree(tree*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+    if(root->data>data)
+    root->left=create_tree(root->left,data);
+    else
+    root->right = create_tree(root->right,data);
+    return root;
+}
+
+int** levelorder(tree*root,int**returncolsize,int*returnsize)
+{
+    queue*q;
+    q = create_queue();
+     enqueue(q,root);
+     int**arr = malloc(sizeof(int*)*100);
+     *returnsize = 0;
+     *returncolsize =  malloc(sizeof(int)*100); 
+     int n=0;
+     while(q->front!=NULL)
+     {
+        struct qnode*temp = q->front;
+        int levelcount=0;
+        while(temp!=NULL)
+        {
+            levelcount++;
+            temp = temp->next;
+        }
+         arr[n] = malloc(levelcount*sizeof(int));
+        for(int i=0;i<levelcount;i++)
+        {
+            tree*current = dequeue(q);
+            if(current->left)
+            enqueue(q,current->left);
+            if(current->right)
+            enqueue(q,current->right);
+            //printf("%d ",current->data);
+            arr[n][i]= current->data;
+        }
+        (*returncolsize)[n++]=levelcount;
+     }
+     *returnsize = n;
+     return arr;
+}
+
+int main()
+{
+    int size;
+    printf("enter size of array : ");
+    scanf("%d",&size);
+    int arr[size];
+    printf("enter tree elements : ");
+    for(int i =0;i<size;i++)
+    scanf("%d",arr+i);
+    tree*root=NULL;
+    for(int i=0;i<size;i++)
+    root = create_tree(root,arr[i]);
+    int*returncolsize=NULL;
+    int returnsize=0;
+    int **res = levelorder(root,&returncolsize,&returnsize);
+    for(int i=0;i<returnsize;i++)
+    {
+        for(int j=0;j<returncolsize[i];j++)
+        {
+            printf("%d ",res[i][j]);
+        }
+        printf("\n");
+    }
+}
