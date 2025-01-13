@@ -1,0 +1,78 @@
+#include<stdlib.h>
+#include<stdio.h>
+#include<stdbool.h>
+#include<math.h>
+
+typedef struct node
+{
+    struct node*left;
+    struct node*right;
+    int data;
+}Tree;
+
+Tree*create_t_node(int data)
+{
+    Tree*new = malloc(sizeof(Tree));
+    new->left = NULL;
+    new->right = NULL;
+    new->data = data;
+    return new;
+}
+
+
+Tree*create_tree(Tree*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+
+    if(root->data>data)
+    root->left = create_tree(root->left,data);
+    else
+    root->right = create_tree(root->right,data);
+    return root;
+}
+
+int checkbalance(Tree*root,bool*balance)
+{
+    if(root==NULL)
+    return 0;
+    int left = checkbalance(root->left,balance);
+    int right = checkbalance(root->right,balance);
+
+    if(*balance==false)
+    return 0;
+
+    if(abs(left-right)>1)
+    {
+        *balance=false;
+        return 0;
+    }
+    return 1 + (left > right?left:right);
+}
+
+bool isbalanced(Tree*root)
+{
+   bool balance = true;
+    checkbalance(root,&balance);
+    return balance;
+}
+
+int main()
+{
+    int size;
+    printf("Enter size of array : ");
+    scanf("%d",&size);
+    printf("Enter array elements : ");
+    int arr[size];
+    Tree*root=NULL;
+    for(int i=0;i<size;i++)
+    scanf("%d",arr+i);
+
+    for(int i =0;i<size;i++)
+    root = create_tree(root,arr[i]);
+
+    if(isbalanced(root))
+    printf("Tree is balance");
+    else
+    printf("Tree is not balanced");
+}
