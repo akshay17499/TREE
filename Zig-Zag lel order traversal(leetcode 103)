@@ -1,0 +1,96 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct node
+{
+    struct node*left;
+    struct node*right;
+    int data;
+}tree;
+
+tree*create_t_node(int data)
+{
+    tree*new = malloc(sizeof(tree));
+    new->data=data;
+    new->left=new->right=NULL;
+    return new;
+}
+
+tree*create_tree(tree*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+    if(root->data>data)
+    root->left=create_tree(root->left,data);
+    else
+    root->right = create_tree(root->right,data);
+    return root;
+}
+
+void reverse(int*arr,int size)
+{
+    for(int i =0;i<size/2;i++)
+    {
+        int temp = arr[i];
+        arr[i] = arr[size-1-i];
+        arr[size-1-i] = temp;
+    }
+}
+
+int** zigzagLevelOrder(tree* root, int* returnSize, int** returnColumnSizes) 
+{
+    int**arr = malloc(sizeof(int*)*100);
+     *returnColumnSizes = malloc(sizeof(int)*100);
+     tree*queue[2010];
+     int rear=0,front=0;
+     queue[rear++]=root;
+     int j = 0;
+     while(front<rear)
+     {
+        int length = rear - front;
+
+        arr[j] = malloc(sizeof(int)*length);
+        (*returnColumnSizes)[j]=length;
+        for(int i=0;i<length;i++)
+        {
+          tree*temp = queue[front++];
+
+          if(temp->left)
+          queue[rear++]=temp->left;
+          if(temp->right)
+          queue[rear++]=temp->right;
+          arr[j][i] = temp->data;
+        }
+        if(j%2!=0)
+        reverse(arr[j],length);
+        j++;
+
+     }
+    * returnSize = j;
+    return arr;
+}
+int main()
+{
+    int size;
+    printf("enter size of array : ");
+    scanf("%d",&size);
+    int arr[size];
+    printf("enter tree elements : ");
+    for(int i =0;i<size;i++)
+    scanf("%d",arr+i);
+    tree*root=NULL;
+    for(int i=0;i<size;i++)
+    root = create_tree(root,arr[i]);
+    int*returncolsize=NULL;
+    int returnsize=0;
+    int **res = zigzagLevelOrder(root,&returnsize,&returncolsize);
+    
+    for(int i=0;i<returnsize;i++)
+    {  
+        for(int j=0;j<returncolsize[i];j++)
+        {
+            printf("%d ",res[i][j]);
+        }
+        printf("\n");
+    }
+}
