@@ -1,0 +1,117 @@
+#include<stdlib.h>
+#include<stdio.h>
+#include<stdbool.h>
+typedef struct node
+{
+    struct node*left;
+    struct node*right;
+    int data;
+}Tree;
+
+typedef struct Stack{
+   struct Stack* next;
+   Tree*root;
+   int height;
+}stack;
+
+Tree*create_t_node(int data)
+{
+    Tree*new = malloc(sizeof(Tree));
+    new->right = NULL;
+    new->left = NULL;
+    new->data = data;
+    return new;
+}
+
+stack*create_s_node(Tree*root)
+{
+    stack*new = malloc(sizeof(stack));
+    new->next = NULL;
+    new->root = root;
+    return new;
+}
+Tree*create_tree(Tree*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+
+    if(root->data>data)
+    root->left = create_tree(root->left,data);
+    else
+    root->right = create_tree(root->right,data);
+    return root;
+}
+
+void push(stack**top,Tree*root)
+{
+    if(*top==NULL)
+    {
+        *top = create_s_node(root);
+        return;
+    }
+    stack*temp = create_s_node(root);
+    temp->next = *top;
+    *top = temp;
+}
+
+Tree*pop(stack**top)
+{
+    if(*top==NULL)
+    return NULL;
+    stack*temp = *top;
+    *top = temp->next;
+    return temp->root;
+}
+ 
+ bool isbalanced(Tree*root)
+ {
+   stack*top = NULL;
+   Tree* current=root;
+   Tree* lastseen = NULL;
+   int flag=1;
+   int lefth,righth;
+   while(top!=NULL||current!=NULL)
+   {
+    if(current)
+    {
+        push(&top,current);
+        current = current->left;
+    }
+    else{
+           Tree*temp = top->root;
+           lefth = temp->left ? temp->left->data: 0;
+           righth = temp->right? temp->right->data : 0;
+           if(lefth-righth >1||lefth-righth<-1)
+           return false;
+           if(temp->right!=NULL&&temp->right!=lastseen)
+           current = temp->right;
+           else{
+             temp->data = 1+ (lefth>righth?lefth:righth);
+             lastseen = temp;
+             pop(&top);
+           }
+    }
+   }
+   return true;
+ }
+
+int main()
+{
+    int size;
+    printf("Enter size of array : ");
+    scanf("%d",&size);
+    printf("Enter array elements : ");
+    int arr[size];
+    Tree*root=NULL;
+    for(int i=0;i<size;i++)
+    scanf("%d",arr+i);
+
+    for(int i =0;i<size;i++)
+    root = create_tree(root,arr[i]);
+
+    if(isbalanced(root))
+    printf("Tree is balance");
+    else
+    printf("Tree is not balanced");
+
+}
