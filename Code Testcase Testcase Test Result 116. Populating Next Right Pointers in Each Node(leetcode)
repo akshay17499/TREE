@@ -1,0 +1,29 @@
+struct Node* connect(struct Node* root) 
+{
+    if(root==NULL)
+    return NULL;
+	struct Node*arr[5000];
+    int rear=0;
+    int front = 0;
+    arr[rear++] = root;
+    struct Node*prev=NULL;
+    while(front<rear)
+    {
+        int length = rear-front;
+        for(int i= 0;i<length;i++)
+        {
+            struct Node*temp = arr[front++];
+            temp->next=NULL;
+            if(temp->left)
+            arr[rear++]=temp->left;
+            if(temp->right)
+            arr[rear++]=temp->right;
+            if(i!=0)
+            {
+               prev->next = temp;
+            }
+            prev = temp;
+        }
+    }
+    return root;
+}
