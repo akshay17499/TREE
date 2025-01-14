@@ -1,0 +1,115 @@
+#include<stdlib.h>
+#include<stdio.h>
+
+struct TreeNode{
+    struct TreeNode*left;
+    struct TreeNode*right;
+    int val;
+};
+
+
+struct TreeNode* create_t_node(int data)
+{
+    struct TreeNode*new = malloc(sizeof(struct TreeNode));
+    new->left = NULL;
+    new->right = NULL;
+    new->val = data;
+    return new;
+}
+
+struct TreeNode*create_bst(struct TreeNode*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+   
+   if(root->val>data)
+   root->left = create_bst(root->left,data);
+   else
+   root->right = create_bst(root->right,data);
+   return root;
+}
+
+void copy_stack(int**arr,int n,struct TreeNode **stack,int size)
+{
+    arr[n] = malloc(sizeof(int)*(size+3));
+    for(int i =0;i<=size;i++)
+    {
+     struct TreeNode *root = stack[i];
+      arr[n][i] = root->val;  
+    }
+    
+}
+
+int** pathSum(struct TreeNode* root, int targetSum, int* returnSize, int** returnColumnSizes) 
+{
+   int**arr = malloc(sizeof(int*)*500);
+   *returnColumnSizes = malloc(sizeof(int)*500);
+    struct TreeNode *stack[5000];
+    int top = -1;
+    struct TreeNode*current = root;
+    int sum=0;
+    int n =0;
+    int flag =0;
+     struct TreeNode*prev;
+     struct TreeNode*lastseen=NULL;
+    while(top!=-1||(current==root&&current!=NULL))
+    {
+        while(current!=NULL)
+        {
+            stack[++top] = current;
+            sum += current->val;
+            prev=current;
+            current=current->left;
+            flag=1;;
+        }
+        if(sum==targetSum&&prev->right==NULL&&flag==1)
+        {
+          copy_stack(arr,n,stack,top);
+          (*returnColumnSizes)[n] = top+1;
+          n++;
+        }
+        flag=0;
+          struct TreeNode*temp = stack[top];
+         if(temp->right!=NULL&&temp->right!=lastseen)
+           {
+            current = temp->right;
+           }
+         else{
+            
+            lastseen = stack[top--];
+            sum = sum - lastseen->val;
+         }    
+    }
+    *returnSize = n;
+    return arr;
+}
+
+int main()
+{
+  int size;
+  printf("enter no of tree elements : ");
+  scanf("%d",&size);
+  int arr[size];
+  printf("enter tree elements : ");
+  for(int i=0;i<size;i++)
+  scanf("%d",arr+i);
+  
+  struct TreeNode*root = NULL;
+  for(int i=0;i<size;i++)
+  root=create_bst(root,arr[i]);
+   printf("target sum : ");
+   int target;
+   scanf("%d",&target);
+   int*colsize=NULL;
+   size=0;
+
+  int **path = pathSum(root,target,&size,&colsize);
+   for(int i =0;i<size;i++)
+   {
+    for(int j=0;j<colsize[i];j++)
+    {
+        printf("%d ",path[i][j]);
+    }
+    printf("\n");
+   }
+}
