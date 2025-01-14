@@ -1,0 +1,77 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct TreeNode
+{
+    int val;
+    struct TreeNode*left;
+    struct TreeNode*right;
+};
+
+struct TreeNode*create_node(int data)
+{
+    struct TreeNode*new = malloc(sizeof(struct TreeNode));
+    new->left=new->right=NULL;
+    new->val = data;
+    return new;
+}
+
+struct TreeNode*create_bst(struct TreeNode*root,int data)
+{
+    if(root==NULL)
+    return create_node(data);
+    if(root->val>data)
+    root->left = create_bst(root->left,data);
+    else
+    root->right =  create_bst(root->right,data);
+    return root;
+}
+
+int*levelsum(struct TreeNode*root,int*size)
+{
+    int *arr = malloc(sizeof(int)*100);
+    struct TreeNode*queue[200];
+    int front = 0;
+    int rear = 0;
+    int sum=0;
+    int n=0;
+    queue[rear++] = root;
+    while(front<rear)
+    {
+        int length = rear-front;
+        for(int i =0;i<length;i++)
+        {
+            struct TreeNode*temp=queue[front++];
+            sum += temp->val;
+            if(temp->left)
+            queue[rear++]=temp->left;
+            if(temp->right)
+            queue[rear++]=temp->right;
+        }
+        arr[n++]=sum;
+        sum=0;
+    }
+    *size = n;
+    return arr;
+}
+
+int main()
+{
+    int size;
+    printf("enter size of array : ");
+    scanf("%d",&size);
+    int arr[size];
+    printf("enter tree elements : ");
+    for(int i =0;i<size;i++)
+    scanf("%d",arr+i);
+    struct TreeNode*root=NULL;
+    for(int i=0;i<size;i++)
+    root = create_bst(root,arr[i]);
+    //int*returncolsize=NULL;
+    int returnsize=0;
+    int *res = levelsum(root,&returnsize);
+    for(int i=0;i<returnsize;i++)
+    {
+        printf("%d ",res[i]);
+    }
+}
