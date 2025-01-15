@@ -1,0 +1,84 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct TreeNode
+{
+    int val;
+    struct TreeNode*left;
+    struct TreeNode*right;
+};
+
+struct TreeNode*create_node(int data)
+{
+    struct TreeNode*new = malloc(sizeof(struct TreeNode));
+    new->left=new->right=NULL;
+    new->val = data;
+    return new;
+}
+
+struct TreeNode*create_bst(struct TreeNode*root,int data)
+{
+    if(root==NULL)
+    return create_node(data);
+    if(root->val>data)
+    root->left = create_bst(root->left,data);
+    else
+    root->right =  create_bst(root->right,data);
+    return root;
+}
+
+
+
+
+
+int* rightSideView(struct TreeNode* root, int* returnSize) 
+{
+    if(root==NULL)
+    {
+       * returnSize=0;
+       return NULL; 
+    }
+   struct TreeNode*queue[110];
+   int front=0;
+   int rear = 0;
+   queue[rear++]=root;
+  int*arr = malloc(sizeof(int)*100);
+  int n=0;
+  struct TreeNode*temp;
+   while(front<rear)
+   {
+    int length =  rear-front;
+    for(int i=0;i<length;i++)
+    {
+      temp= queue[front++];
+      if(temp->left)
+      queue[rear++]=temp->left;
+      if(temp->right)
+      queue[rear++]=temp->right;
+    }
+    arr[n++]=temp->val;
+   }
+   *returnSize=n;
+   return arr;
+}
+
+int main()
+{
+    int size;
+    printf("enter size of array : ");
+    scanf("%d",&size);
+    int arr[size];
+    printf("enter tree elements : ");
+    for(int i =0;i<size;i++)
+    scanf("%d",arr+i);
+    struct TreeNode*root=NULL;
+    for(int i=0;i<size;i++)
+    root = create_bst(root,arr[i]);
+    //int*returncolsize=NULL;
+    int returnsize=0;
+    int *res = rightSideView(root,&returnsize);
+    for(int i=0;i<returnsize;i++)
+    {
+        printf("%d ",res[i]);
+    }
+}
