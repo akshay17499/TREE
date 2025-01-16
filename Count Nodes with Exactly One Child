@@ -1,0 +1,70 @@
+#include<stdlib.h>
+#include<stdio.h>
+
+struct TreeNode{
+    struct TreeNode*left;
+    struct TreeNode*right;
+    int val;
+};
+
+
+struct TreeNode* create_t_node(int data)
+{
+    struct TreeNode*new = malloc(sizeof(struct TreeNode));
+    new->left = NULL;
+    new->right = NULL;
+    new->val = data;
+    return new;
+}
+
+struct TreeNode*create_bst(struct TreeNode*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+   
+   if(root->val>data)
+   root->left = create_bst(root->left,data);
+   else
+   root->right = create_bst(root->right,data);
+   return root;
+}
+
+
+int Exactly_One_Child(struct TreeNode*root)
+{
+  struct TreeNode*stack[500];
+  int top=-1;
+  stack[++top]=root;
+  struct TreeNode*current=root;
+  int count=0;
+  while(top!=-1)
+  {   
+      current = stack[top--];
+      if(current->right==NULL&&current->left!=NULL||current->right!=NULL&&current->left==NULL)
+      count++;
+     if(current->left)
+     stack[++top]=current->left;
+     if(current->right)
+     stack[++top]=current->right;
+  }
+  return count;
+}
+
+int main()
+{
+  int size;
+  printf("enter no of tree elements : ");
+  scanf("%d",&size);
+  int arr[size];
+  printf("enter tree elements : ");
+  for(int i=0;i<size;i++)
+  scanf("%d",arr+i);
+  
+  struct TreeNode*root = NULL;
+  for(int i=0;i<size;i++)
+  root=create_bst(root,arr[i]);
+
+
+  int count = Exactly_One_Child(root);
+  printf("number of nodes having exactly one child : %d ",count);
+}
