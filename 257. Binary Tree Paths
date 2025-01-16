@@ -1,0 +1,127 @@
+#include<stdlib.h>
+#include<stdio.h>
+
+struct TreeNode{
+    struct TreeNode*left;
+    struct TreeNode*right;
+    int val;
+};
+
+
+struct TreeNode* create_t_node(int data)
+{
+    struct TreeNode*new = malloc(sizeof(struct TreeNode));
+    new->left = NULL;
+    new->right = NULL;
+    new->val = data;
+    return new;
+}
+
+struct TreeNode*create_bst(struct TreeNode*root,int data)
+{
+    if(root==NULL)
+    return create_t_node(data);
+   
+   if(root->val>data)
+   root->left = create_bst(root->left,data);
+   else
+   root->right = create_bst(root->right,data);
+   return root;
+}
+char* copy_stack(struct TreeNode**stack,int top)
+{
+  char*arr = malloc(sizeof(char)*(6*top + 6));
+  int index =0;
+  struct TreeNode* temp;
+  for(int i = 0;i<=top;i++)
+  {
+    temp = stack[i];
+    int num = temp->val;
+   // printf("%d ",num);
+    if(num<0)
+    {
+      arr[index++]='-';
+      num = -1*num;
+    }
+    while(num)
+    {
+       if(num<10)
+       {
+        arr[index++] = num+48;
+       }
+       else if(num<100)
+       {
+        arr[index++]= num/10 + 48;
+        arr[index++]=num%10 + 48;
+       }
+       else{
+        arr[index++]= '1';
+        arr[index++]= '0';
+        arr[index++]= '0';
+       }
+       num=0;
+    }
+     if(i!=top)
+     {
+      arr[index++] = '-';
+      arr[index++] = '>';
+     }
+  }
+  arr[index]='\0';
+  return  arr;
+}
+char** binaryTreePaths(struct TreeNode* root, int* returnSize) 
+{
+   struct TreeNode*stack[110];
+   int top = -1;
+   char**arr = malloc(sizeof(char*)*100);
+   int n=0;
+   //stack[++top]=root;
+   struct TreeNode*current=root;
+   struct TreeNode*lastseen=NULL;
+   int flag=1;
+   while(top!=-1||flag==1)
+   { flag=0;
+      int size =0;
+       while(current)
+       {
+          stack[++top]=current;
+          if(current!=NULL&&current->right==NULL&&current->left==NULL)
+          {
+            arr[n]=copy_stack(stack,top);
+            n++;
+          }
+          current = current->left;
+          
+       }
+       struct TreeNode*temp= stack[top];
+       if(temp->right!=NULL&&temp->right!=lastseen)
+       current = temp->right;
+       else{
+        lastseen = stack[top--];
+       }
+   }
+   *returnSize=n;
+   return arr;
+}
+int main()
+{
+  int size;
+  printf("enter no of tree elements : ");
+  scanf("%d",&size);
+  int arr[size];
+  printf("enter tree elements : ");
+  for(int i=0;i<size;i++)
+  scanf("%d",arr+i);
+  
+  struct TreeNode*root = NULL;
+  for(int i=0;i<size;i++)
+  root=create_bst(root,arr[i]);
+   int returnSize=0;
+   char**ptr=binaryTreePaths(root, &returnSize); 
+
+  for(int i=0;i<returnSize;i++)
+  {
+    //printf("%s\n",ptr[i]);
+  }
+}
