@@ -1,0 +1,37 @@
+void get_path(struct TreeNode*root,struct TreeNode**arr,int*i,int target)
+{
+     if(root->val>target)
+      {
+         arr[(*i)++]=root;
+         get_path(root->left,arr,i,target);
+      }
+     else if(root->val<target)
+      {
+          arr[(*i)++]=root;
+          get_path(root->right,arr,i,target);
+      }
+      else{
+          arr[(*i)++]=root;
+          return ;
+      }
+}
+
+struct TreeNode* lowestCommonAncestor(struct TreeNode* root, struct TreeNode* p, struct TreeNode* q) {
+    struct TreeNode*arr1[100000];
+    struct TreeNode*arr2[100000];
+    int index1=0,index2=0;
+    get_path(root,arr1,&index1,p->val);
+    get_path(root,arr2,&index2,q->val);
+    int i=0,j=0;
+    struct TreeNode*temp=root;
+    while(i<index1&&j<index2)
+    {
+        if(arr1[i]==arr2[j])
+        {
+            temp = arr1[i];
+        }
+        i++;
+        j++;
+    }
+  return temp;
+}
