@@ -1,0 +1,59 @@
+ struct TreeNode*createnode(int data)
+ {
+    struct TreeNode*new = malloc(sizeof(struct TreeNode));
+    new->right=NULL;
+    new->left = NULL;
+    new->val = data;
+    return new;
+ }
+struct TreeNode* addOneRow(struct TreeNode* root, int val, int depth) {
+    
+         struct TreeNode*queue[10000];
+         int rear =0,front=0;
+         queue[rear++] = root;
+         int count = 1;
+          if(depth==count)
+          {
+            struct TreeNode*temp = root;
+            root = createnode(val);
+            root->left = temp;
+            return root; 
+
+          }
+         while(front<rear)
+         {
+            int len = rear-front;
+            for(int i=0;i<len;i++)
+            {
+                struct TreeNode*temp = queue[front++];
+                if(temp->left)
+                {
+                    queue[rear++] = temp->left;
+
+                }
+                    if(count==depth-1)
+                    {
+                        struct TreeNode*t = temp->left;
+                        temp->left = createnode(val);
+                        temp->left->left = t;
+                    }
+                
+                if(temp->right)
+                {
+                    queue[rear++] = temp->right;
+                }
+                    if(count==depth-1)
+                    {
+                        struct TreeNode*t = temp->right;
+                        temp->right = createnode(val);
+                        temp->right->right = t;
+                    }
+                
+            }
+         count++;
+            if(count ==  depth)
+            break;
+         }
+
+return root;
+}
