@@ -1,0 +1,47 @@
+ void rev(int*arr,int size)
+ {
+    for(int i=0;i<size/2;i++)
+    {
+        int temp = arr[i];
+        arr[i] = arr[size-i-1];
+        arr[size-i-1] = temp;
+    }
+ }
+struct TreeNode* reverseOddLevels(struct TreeNode* root) {
+
+   int count=0;;
+   struct TreeNode*queue[20000];
+   int front=0;
+   int rear=0;
+   queue[rear++] = root;
+   while(front<rear)
+   {
+    count++;
+    int len = rear - front;
+    int arr[2*len+5];
+    int k=0;
+    for(int i=0;i<len;i++)
+    {
+        struct TreeNode*temp = queue[front++];
+        if(temp->left)
+        {
+          queue[rear++] = temp->left;
+          arr[k++] =temp->left->val;
+        }
+        if(temp->right)
+        {
+          queue[rear++] = temp->right;
+          arr[k++] = temp->right->val; 
+        }
+    }
+    if(count%2!=0)
+    {
+        rev(arr,k);
+        k=0;
+        for(int i=front;i<rear;i++)
+        queue[i]->val = arr[k++];
+
+    }
+   } 
+   return root;
+}
