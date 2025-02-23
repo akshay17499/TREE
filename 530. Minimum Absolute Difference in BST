@@ -1,0 +1,33 @@
+void inorder(int*arr,int*i,struct TreeNode* root)
+{
+    if(root==NULL)
+    return;
+    inorder(arr,i,root->left);
+    arr[(*i)++]=root->val;
+    inorder(arr,i,root->right);
+}
+
+int getMinimumDifference(struct TreeNode* root) 
+{
+    int arr[100000];
+    int i=0;
+   inorder(arr,&i,root);
+   int max = arr[i-1];
+   int *temp = calloc(max+1,sizeof(int));
+   for(int j=0;j<i;j++)
+   temp[arr[j]] = 1;
+   int diff=INT_MAX;
+   int count=0;
+   for(int j=arr[0];j<max+1;j++)
+   {
+ 
+      if(temp[j]==0)
+      count++; 
+      else{
+        if(j!=arr[0]&&diff>count)
+        diff = count;
+        count=0;
+      }
+   }  
+   return diff+1;
+}
