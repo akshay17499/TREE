@@ -1,0 +1,85 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX 100
+typedef struct node
+{
+    int data;
+    struct node*right;
+    struct node*left;
+}node;
+
+node*create_node(int data)
+{
+    node*newnode = malloc(sizeof(node));
+    newnode->right = NULL;
+    newnode->left = NULL;
+    newnode->data = data;
+    return newnode;
+}
+
+node*insert_into_bst(node*root,int data)
+{
+    if(root==NULL)
+        return create_node(data);
+
+    if(root->data > data)
+    {
+        root->left = insert_into_bst(root->left,data);
+    }
+    else if(root->data < data)
+    {
+        root->right = insert_into_bst(root->right,data);
+    }
+    else{
+        return root;
+    }
+    return root;
+}
+
+node* convert_arr_to_bst(node*root,int*arr,int left,int right)
+{
+    if(left<right)
+    {
+        int mid = (left+right)/2;
+        root = insert_into_bst(root,arr[mid]);
+        convert_arr_to_bst(root,arr,left,mid);
+        convert_arr_to_bst(root,arr,mid+1,right);
+        return root;
+    }
+    return NULL;
+}
+
+void inorder(node*root)
+{
+    node*stack[MAX];
+    int top = -1;
+    node*current = root;
+    while(top!=-1||current!=NULL)
+    {
+        if(current)
+        {
+            stack[++top] = current;
+            current = current->left;
+        }
+        else{
+            current = stack[top--];
+            printf("%d ",current->data);
+            current = current->right;
+        }
+    }
+}
+
+int main()
+{
+    int size;
+    printf("size of arr : ");
+    scanf("%d",&size);
+    node*root = NULL;
+    int arr[size];
+    printf("enter array elements in sorted order : ");
+    for(int i=0;i<size;i++)
+        scanf("%d",arr+i);
+    root =  convert_arr_to_bst(root,arr,0,size);
+
+    inorder(root);
+}
